@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kerana Showroom | Boutique & Indumentaria Femenina</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Barra Superior -->
+  <div class="top-bar">
+    ENVÍOS A TODO EL PAÍS • ATENCIÓN PERSONALIZADA POR WHATSAPP
+  </div>
+
+  <!-- Navegación Principal -->
+  <header class="navbar">
+    <a href="#" class="brand">
+      <img src="logo.jpg" alt="Logo Kerana Showroom" class="brand-logo" onerror="this.style.display='none'">
+      <div class="brand-text">
+        <span class="brand-name">KERANA</span>
+        <span class="brand-sub">SHOWROOM</span>
+      </div>
+    </a>
+
+    <nav class="nav-links">
+      <button type="button" class="filter-btn active" data-category="todos">Todo</button>
+      <button type="button" class="filter-btn" data-category="remeras">Remeras</button>
+      <button type="button" class="filter-btn" data-category="shorts">Shorts</button>
+      <button type="button" class="filter-btn" data-category="body">Bodysuits</button>
+      <button type="button" class="filter-btn" data-category="top">Tops</button>
+      <button type="button" class="filter-btn" data-category="carteras">Carteras</button>
+    </nav>
+
+    <div class="nav-actions">
+      <button type="button" id="btn-cart-toggle" class="btn-cart">
+        Bolsa (<span id="cart-count">0</span>)
+      </button>
+      <button type="button" id="btn-owner-access" class="btn-owner">Acceso Propietario</button>
+    </div>
+  </header>
+
+  <!-- Portada Editorial -->
+  <section class="hero">
+    <div class="hero-content">
+      <img src="logo.jpg" alt="Sello Kerana Showroom" class="hero-emblem" onerror="this.style.display='none'">
+      <span class="hero-tag">COLECCIÓN EXCLUSIVA 2026</span>
+      <h1>Elegancia en cada detalle</h1>
+      <p>Haz clic en cualquier prenda para seleccionar tu talle, ver detalles y armar tu pedido.</p>
+      <div class="hero-actions">
+        <a href="#catalogo" class="btn-primary">Explorar Colección</a>
+        <a href="https://wa.me/5493804128496" target="_blank" class="btn-outline">Asesoramiento WhatsApp</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Panel de Propietario (Conectado a la Nube) -->
+  <section id="owner-panel" class="owner-panel hidden">
+    <div class="panel-header">
+      <div>
+        <h2>Gestión de Catálogo en la Nube</h2>
+        <p>Las prendas que publiques o elimines aquí se actualizarán para todas tus clientas al instante.</p>
+      </div>
+      <button type="button" id="btn-logout" class="btn-close">Cerrar Sesión</button>
+    </div>
+
+    <form id="product-form" class="product-form">
+      <div class="form-group">
+        <label for="prod-name">Nombre de la prenda</label>
+        <input type="text" id="prod-name" placeholder="Ej: Body Satinado Negro" required>
+      </div>
+      <div class="form-group">
+        <label for="prod-category">Categoría</label>
+        <select id="prod-category" required>
+          <option value="remeras">Remeras</option>
+          <option value="shorts">Shorts</option>
+          <option value="body">Bodysuits</option>
+          <option value="top">Tops</option>
+          <option value="carteras">Carteras</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="prod-price">Precio ($ ARS)</label>
+        <input type="number" id="prod-price" placeholder="Ej: 24500" required>
+      </div>
+      <div class="form-group">
+        <label for="prod-desc">Descripción / Detalles</label>
+        <input type="text" id="prod-desc" placeholder="Ej: Tela suave al tacto, calce ajustado">
+      </div>
+      <div class="form-group">
+        <label for="prod-file">Subir foto desde dispositivo</label>
+        <input type="file" id="prod-file" accept="image/*">
+      </div>
+      <div class="form-group">
+        <label for="prod-url">O pegar enlace directo de imagen</label>
+        <input type="url" id="prod-url" placeholder="https://...">
+      </div>
+      <button type="submit" id="btn-submit-prod" class="btn-submit">Publicar Prenda en la Nube</button>
+    </form>
+  </section>
+
+  <!-- Catálogo de Productos -->
+  <main id="catalogo" class="catalog-container">
+    <div class="section-header">
+      <span class="section-subtitle">NUESTRAS PRENDAS</span>
+      <h2 id="catalog-title" class="section-title">Catálogo Completo</h2>
+      <div class="divider"></div>
+    </div>
+
+    <div id="product-grid" class="product-grid">
+      <p class="empty-msg">Cargando catálogo desde la nube...</p>
+    </div>
+  </main>
+
+  <!-- Modal de Detalle de Prenda -->
+  <div id="product-modal" class="modal hidden">
+    <div class="modal-product-box">
+      <button type="button" id="close-product-modal" class="modal-close-x">&times;</button>
+      <div class="modal-product-grid">
+        <div class="modal-img-col">
+          <img id="modal-prod-img" src="" alt="Prenda">
+        </div>
+        <div class="modal-info-col">
+          <span id="modal-prod-cat" class="modal-cat-tag">CATEGORÍA</span>
+          <h3 id="modal-prod-title">Nombre de Prenda</h3>
+          <p id="modal-prod-price" class="modal-price">$0</p>
+          <p id="modal-prod-desc" class="modal-desc">Descripción de la prenda.</p>
+
+          <div class="size-selector">
+            <label>Seleccionar Talle:</label>
+            <div class="size-options" id="size-options">
+              <button type="button" class="size-btn active" data-size="S">S</button>
+              <button type="button" class="size-btn" data-size="M">M</button>
+              <button type="button" class="size-btn" data-size="L">L</button>
+              <button type="button" class="size-btn" data-size="Único">Único</button>
+            </div>
+          </div>
+
+          <div class="qty-selector">
+            <label>Cantidad:</label>
+            <div class="qty-controls">
+              <button type="button" id="qty-minus">-</button>
+              <span id="qty-value">1</span>
+              <button type="button" id="qty-plus">+</button>
+            </div>
+          </div>
+
+          <div class="modal-product-actions">
+            <button type="button" id="btn-add-to-cart" class="btn-submit">Agregar a mi Bolsa</button>
+            <a id="btn-direct-wa" href="#" target="_blank" class="btn-wa-outline">Pedir solo esta prenda por WhatsApp</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Panel Lateral de Bolsa de Compras -->
+  <aside id="cart-drawer" class="cart-drawer hidden">
+    <div class="cart-header">
+      <h3>Tu Bolsa de Pedido</h3>
+      <button type="button" id="close-cart" class="modal-close-x">&times;</button>
+    </div>
+    <div id="cart-items" class="cart-items"></div>
+    <div class="cart-footer">
+      <div class="cart-total">
+        <span>Total estimado:</span>
+        <strong id="cart-total-price">$0</strong>
+      </div>
+      <button type="button" id="btn-checkout-wa" class="btn-submit">Enviar Pedido por WhatsApp</button>
+    </div>
+  </aside>
+
+  <!-- Sección Social -->
+  <section class="social-banner">
+    <div class="social-content">
+      <h2>Seguinos en Instagram</h2>
+      <p>Enterate antes que nadie de los nuevos ingresos, combos y promociones exclusivas.</p>
+      <a href="https://instagram.com/kerana.showroom" target="_blank" class="btn-primary">@kerana.showroom</a>
+    </div>
+  </section>
+
+  <!-- Pie de Página -->
+  <footer class="footer">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <img src="logo.jpg" alt="Logo Kerana" class="footer-logo" onerror="this.style.display='none'">
+        <p>Moda femenina curada con estilo, calidad y atención personalizada.</p>
+      </div>
+      <div class="footer-links">
+        <h4>Categorías</h4>
+        <ul>
+          <li><a href="#catalogo" onclick="filterFromFooter('remeras')">Remeras</a></li>
+          <li><a href="#catalogo" onclick="filterFromFooter('shorts')">Shorts</a></li>
+          <li><a href="#catalogo" onclick="filterFromFooter('body')">Bodysuits</a></li>
+          <li><a href="#catalogo" onclick="filterFromFooter('top')">Tops</a></li>
+          <li><a href="#catalogo" onclick="filterFromFooter('carteras')">Carteras</a></li>
+        </ul>
+      </div>
+      <div class="footer-contact">
+        <h4>Contacto Directo</h4>
+        <p>WhatsApp: <a href="https://wa.me/5493804128496" target="_blank">+54 9 3804128496</a></p>
+        <p>Instagram: <a href="https://instagram.com/kerana.showroom" target="_blank">@kerana.showroom</a></p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 Kerana Showroom. Todos los derechos reservados.</p>
+    </div>
+  </footer>
+
+  <!-- Modal Login Propietario -->
+  <div id="login-modal" class="modal hidden">
+    <div class="modal-content">
+      <img src="logo.jpg" alt="Logo" class="modal-logo" onerror="this.style.display='none'">
+      <h3>Acceso Propietario</h3>
+      <p>Ingresa tu contraseña de administración:</p>
+      <input type="password" id="owner-password" placeholder="••••••••">
+      <p id="login-error" class="error-msg hidden">Contraseña incorrecta</p>
+      <div class="modal-actions">
+        <button type="button" id="btn-confirm-login" class="btn-submit">Ingresar</button>
+        <button type="button" id="btn-cancel-login" class="btn-cancel">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Conexión a Firebase Cloud Firestore (Módulo ES) -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+    import { 
+      getFirestore, 
+      collection, 
+      addDoc, 
+      deleteDoc, 
+      doc, 
+      onSnapshot, 
+      query, 
+      orderBy 
+    } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+
+    // =========================================================================
+    // PEGA AQUÍ TU CONFIGURACIÓN DE FIREBASE (del Paso 1)
+    // =========================================================================
+    const firebaseConfig = {
+      apiKey: "TU_API_KEY_AQUI",
+      authDomain: "TU_PROYECTO.firebaseapp.com",
+      projectId: "TU_PROYECTO",
+      storageBucket: "TU_PROYECTO.appspot.com",
+      messagingSenderId: "TU_SENDER_ID",
+      appId: "TU_APP_ID"
+    };
+    // =========================================================================
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const productosRef = collection(db, "productos");
+
+    const CLAVE_PROPIETARIO = "kerana2026";
+    const TELEFONO_WHATSAPP = "5493804128496";
+    let isOwnerLoggedIn = false;
+    let currentCategory = "todos";
+    let products = [];
+    let selectedProduct = null;
+    let selectedSize = "S";
+    let selectedQty = 1;
+    let cart = [];
+
+    // Escuchar cambios en tiempo real desde Firebase
+    const q = query(productosRef, orderBy("createdAt", "desc"));
+    onSnapshot(q, (snapshot) => {
+      products = snapshot.docs.map(documento => ({
+        id: documento.id,
+        ...documento.data()
+      }));
+      renderCatalog();
+    }, (error) => {
+      console.error("Error conectando con Firebase:", error);
+      document.getElementById("product-grid").innerHTML = 
+        "<p class='empty-msg'>Configura tus credenciales de Firebase en index.html para conectar el catálogo en la nube.</p>";
+    });
+
+    // Comprimir foto local antes de subir a Firestore (evita límite de 1MB por documento)
+    function compressImage(file, maxWidth = 750, quality = 0.78) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = (event) => {
+          const img = new Image();
+          img.src = event.target.result;
+          img.onload = () => {
+            const canvas = document.createElement("canvas");
+            let width = img.width;
+            let height = img.height;
+
+            if (width > maxWidth) {
+              height = Math.round((height * maxWidth) / width);
+              width = maxWidth;
+            }
+
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0, width, height);
+            resolve(canvas.toDataURL("image/jpeg", quality));
+          };
+          img.onerror = reject;
+        };
+        reader.onerror = reject;
+      });
+    }
+
+    function renderCatalog() {
+      const grid = document.getElementById("product-grid");
+      grid.innerHTML = "";
+
+      const filtered = currentCategory === "todos"
+        ? products
+        : products.filter(p => p.category === currentCategory);
+
+      if (filtered.length === 0) {
+        grid.innerHTML = "<p class='empty-msg'>No hay prendas publicadas en esta categoría aún.</p>";
+        return;
+      }
+
+      filtered.forEach(prod => {
+        const precioFormateado = Number(prod.price).toLocaleString('es-AR');
+        const card = document.createElement("article");
+        card.className = "product-card";
+        card.innerHTML = `
+          <div class="img-wrapper" onclick="openProductDetail('${prod.id}')">
+            <img src="${prod.image}" alt="${prod.name}" onerror="this.src='https://via.placeholder.com/500x650/f7f5f0/111111?text=Kerana+Showroom'">
+            <span class="badge">${prod.category}</span>
+            <div class="quick-view-overlay">Ver detalles y talles</div>
+          </div>
+          <div class="card-info">
+            <h3 onclick="openProductDetail('${prod.id}')" class="clickable-title">${prod.name}</h3>
+            <p class="price">$${precioFormateado}</p>
+            <button type="button" class="btn-buy" onclick="openProductDetail('${prod.id}')">Seleccionar Prenda</button>
+            ${isOwnerLoggedIn ? `<button type="button" class="btn-delete" onclick="deleteProduct('${prod.id}')">Eliminar de la nube</button>` : ""}
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    // Abrir ventana interactiva de la prenda
+    window.openProductDetail = function(id) {
+      selectedProduct = products.find(p => p.id === id);
+      if (!selectedProduct) return;
+
+      selectedSize = selectedProduct.category === "carteras" ? "Único" : "S";
+      selectedQty = 1;
+
+      document.getElementById("modal-prod-img").src = selectedProduct.image;
+      document.getElementById("modal-prod-cat").textContent = selectedProduct.category.toUpperCase();
+      document.getElementById("modal-prod-title").textContent = selectedProduct.name;
+      document.getElementById("modal-prod-price").textContent = `$${Number(selectedProduct.price).toLocaleString('es-AR')}`;
+      document.getElementById("modal-prod-desc").textContent = selectedProduct.desc || "Prenda exclusiva de Kerana Showroom.";
+      document.getElementById("qty-value").textContent = selectedQty;
+
+      document.querySelectorAll(".size-btn").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.size === selectedSize);
+      });
+
+      updateDirectWaLink();
+      document.getElementById("product-modal").classList.remove("hidden");
+    };
+
+    function updateDirectWaLink() {
+      if (!selectedProduct) return;
+      const precio = Number(selectedProduct.price).toLocaleString('es-AR');
+      const msg = encodeURIComponent(`Hola Kerana Showroom! Quiero pedir:\n• ${selectedProduct.name}\n• Talle: ${selectedSize}\n• Cantidad: ${selectedQty}\n• Precio unitario: $${precio}`);
+      document.getElementById("btn-direct-wa").href = `https://wa.me/${TELEFONO_WHATSAPP}?text=${msg}`;
+    }
+
+    document.getElementById("close-product-modal").addEventListener("click", () => {
+      document.getElementById("product-modal").classList.add("hidden");
+    });
+
+    document.querySelectorAll(".size-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".size-btn").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        selectedSize = btn.dataset.size;
+        updateDirectWaLink();
+      });
+    });
+
+    document.getElementById("qty-minus").addEventListener("click", () => {
+      if (selectedQty > 1) {
+        selectedQty--;
+        document.getElementById("qty-value").textContent = selectedQty;
+        updateDirectWaLink();
+      }
+    });
+
+    document.getElementById("qty-plus").addEventListener("click", () => {
+      selectedQty++;
+      document.getElementById("qty-value").textContent = selectedQty;
+      updateDirectWaLink();
+    });
+
+    // Bolsa de compras
+    document.getElementById("btn-add-to-cart").addEventListener("click", () => {
+      if (!selectedProduct) return;
+      const existing = cart.find(item => item.id === selectedProduct.id && item.size === selectedSize);
+      if (existing) {
+        existing.qty += selectedQty;
+      } else {
+        cart.push({
+          id: selectedProduct.id,
+          name: selectedProduct.name,
+          price: Number(selectedProduct.price),
+          image: selectedProduct.image,
+          size: selectedSize,
+          qty: selectedQty
+        });
+      }
+      updateCartUI();
+      document.getElementById("product-modal").classList.add("hidden");
+      document.getElementById("cart-drawer").classList.remove("hidden");
+    });
+
+    function updateCartUI() {
+      const container = document.getElementById("cart-items");
+      const countEl = document.getElementById("cart-count");
+      const totalEl = document.getElementById("cart-total-price");
+
+      const totalItems = cart.reduce((acc, item) => acc + item.qty, 0);
+      const totalPrice = cart.reduce((acc, item) => acc + (item.price * item.qty), 0);
+
+      countEl.textContent = totalItems;
+      totalEl.textContent = `$${totalPrice.toLocaleString('es-AR')}`;
+
+      if (cart.length === 0) {
+        container.innerHTML = "<p class='empty-cart'>Tu bolsa está vacía. Haz clic en cualquier prenda para agregarla.</p>";
+        return;
+      }
+
+      container.innerHTML = cart.map((item, idx) => `
+        <div class="cart-item">
+          <img src="${item.image}" alt="${item.name}">
+          <div class="cart-item-info">
+            <h4>${item.name}</h4>
+            <p>Talle: <strong>${item.size}</strong> | Cant: ${item.qty}</p>
+            <span>$${(item.price * item.qty).toLocaleString('es-AR')}</span>
+          </div>
+          <button type="button" class="remove-cart-item" onclick="removeCartItem(${idx})">&times;</button>
+        </div>
+      `).join("");
+    }
+
+    window.removeCartItem = function(index) {
+      cart.splice(index, 1);
+      updateCartUI();
+    };
+
+    document.getElementById("btn-cart-toggle").addEventListener("click", () => {
+      document.getElementById("cart-drawer").classList.remove("hidden");
+    });
+
+    document.getElementById("close-cart").addEventListener("click", () => {
+      document.getElementById("cart-drawer").classList.add("hidden");
+    });
+
+    document.getElementById("btn-checkout-wa").addEventListener("click", () => {
+      if (cart.length === 0) {
+        alert("Agrega al menos una prenda a tu bolsa antes de enviar el pedido.");
+        return;
+      }
+      let message = "Hola Kerana Showroom! Quiero realizar el siguiente pedido:\n\n";
+      cart.forEach(item => {
+        message += `• ${item.qty}x ${item.name} (Talle: ${item.size}) - $${(item.price * item.qty).toLocaleString('es-AR')}\n`;
+      });
+      const total = cart.reduce((acc, item) => acc + (item.price * item.qty), 0);
+      message += `\n*Total estimado: $${total.toLocaleString('es-AR')}*`;
+      window.open(`https://wa.me/${TELEFONO_WHATSAPP}?text=${encodeURIComponent(message)}`, "_blank");
+    });
+
+    // Eliminar producto directamente de Firebase
+    window.deleteProduct = async function(id) {
+      if (confirm("¿Deseas eliminar esta prenda de la nube permanentemente?")) {
+        try {
+          await deleteDoc(doc(db, "productos", id));
+        } catch (err) {
+          alert("Error al eliminar: " + err.message);
+        }
+      }
+    };
+
+    window.filterFromFooter = function(cat) {
+      const btn = document.querySelector(`.filter-btn[data-category="${cat}"]`);
+      if (btn) btn.click();
+    };
+
+    document.querySelectorAll(".filter-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        currentCategory = btn.dataset.category;
+        document.getElementById("catalog-title").textContent =
+          currentCategory === "todos" ? "Catálogo Completo" : `Colección ${btn.textContent}`;
+        renderCatalog();
+      });
+    });
+
+    // Acceso Propietario
+    const loginModal = document.getElementById("login-modal");
+    const ownerPanel = document.getElementById("owner-panel");
+    const btnOwnerAccess = document.getElementById("btn-owner-access");
+
+    btnOwnerAccess.addEventListener("click", () => {
+      if (isOwnerLoggedIn) {
+        ownerPanel.classList.toggle("hidden");
+      } else {
+        loginModal.classList.remove("hidden");
+        document.getElementById("owner-password").value = "";
+        document.getElementById("login-error").classList.add("hidden");
+      }
+    });
+
+    document.getElementById("btn-cancel-login").addEventListener("click", () => {
+      loginModal.classList.add("hidden");
+    });
+
+    document.getElementById("btn-confirm-login").addEventListener("click", () => {
+      const pass = document.getElementById("owner-password").value;
+      if (pass === CLAVE_PROPIETARIO) {
+        isOwnerLoggedIn = true;
+        loginModal.classList.add("hidden");
+        ownerPanel.classList.remove("hidden");
+        btnOwnerAccess.textContent = "Panel Propietario";
+        btnOwnerAccess.classList.add("owner-active");
+        renderCatalog();
+      } else {
+        document.getElementById("login-error").classList.remove("hidden");
+      }
+    });
+
+    document.getElementById("btn-logout").addEventListener("click", () => {
+      isOwnerLoggedIn = false;
+      ownerPanel.classList.add("hidden");
+      btnOwnerAccess.textContent = "Acceso Propietario";
+      btnOwnerAccess.classList.remove("owner-active");
+      renderCatalog();
+    });
+
+    // Subir prenda nueva a Firebase
+    document.getElementById("product-form").addEventListener("submit", async function(e) {
+      e.preventDefault();
+      const submitBtn = document.getElementById("btn-submit-prod");
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Subiendo a la nube...";
+
+      try {
+        const name = document.getElementById("prod-name").value;
+        const category = document.getElementById("prod-category").value;
+        const price = Number(document.getElementById("prod-price").value);
+        const desc = document.getElementById("prod-desc").value || "Prenda exclusiva de Kerana Showroom.";
+        const fileInput = document.getElementById("prod-file");
+        const urlInput = document.getElementById("prod-url").value;
+
+        let finalImage = "https://via.placeholder.com/500x650/f7f5f0/111111?text=Kerana+Showroom";
+
+        if (fileInput.files && fileInput.files[0]) {
+          finalImage = await compressImage(fileInput.files[0]);
+        } else if (urlInput) {
+          finalImage = urlInput;
+        }
+
+        await addDoc(productosRef, {
+          name,
+          category,
+          price,
+          desc,
+          image: finalImage,
+          createdAt: Date.now()
+        });
+
+        document.getElementById("product-form").reset();
+        alert("¡Prenda publicada! Ya es visible para todas tus clientas.");
+      } catch (error) {
+        alert("Hubo un error al guardar en Firebase: " + error.message);
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Publicar Prenda en la Nube";
+      }
+    });
+
+    updateCartUI();
+  </script>
+</body>
+</html>
